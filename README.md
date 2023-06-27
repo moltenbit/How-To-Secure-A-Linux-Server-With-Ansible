@@ -47,7 +47,71 @@ If you need to run the playbooks multiple times remember to use the SSH key and 
 Tested on Debian 12 Bookworm.
 
 ## Configurations
-WIP
+The playbook uses most of the settings from ["How To Secure A Linux Server"](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server) / my choices if the guide has more than one option to do something.
+
+### Requirements
+- sudo installed
+- groups created for *sshusers*, *sudousers* and *suusers*
+- new user created with the name specified in *variables.yml* and added to groups
+- use of sudo limited to sudousers group
+- use of su limited to suusers group
+- passwordless sudo enabled for the new user
+- SSH public key added to authorized_keys file
+
+### auditd
+Uses best practice rules from [Neo23x0](https://github.com/Neo23x0) 
+
+### ClamAV
+ClamAV is set to run everyday at 3 AM to scan the full system, exluding sys folders.
+
+### Firewall: UFW
+UFW is set to defaulty deny in and out. 
+The SSH-Port is set to *limit in*, allowed outgoing ports by default are 53 (DNS), 123 (NTP), 80 (http), 443 (https) and the mail port specified in *variables.yml*.
+
+### Firewall: PSAD and Fail2Ban
+PSAD is configured according to "How To Secure A Linux Server" guide.
+
+### Lynis
+Lynis is configured according to "How To Secure A Linux Server" guide and will run an audit + send the report as an attachment to your mail address configured in *variables.yml*.
+
+### Mail
+For mailing I chose msmtp with the help from [Decatec's guide](https://decatec.de/linux/linux-einfach-e-mails-versenden-mit-msmtp/). This will send a testmail.
+
+### Packages
+Installed packages are:
+          - apt-transport-https
+          - ca-certificates
+          - host
+          - kbtin
+          - ntp
+          - libpam-pwquality
+          - unattended-upgrades
+          - apt-listchanges
+          - apticron
+          - ufw
+          - psad
+          - fail2ban
+          - msmtp
+          - msmtp-mta
+          - mailutils
+          - clamav
+          - clamav-freshclam
+          - clamav-daemon
+          - rkhunter
+          - auditd
+          - audispd-plugins
+
+### Password quality
+Password quality is done via pam_pwquality according to "How To Secure A Linux Server" guide.
+
+### Rkhunter
+Rkhunter is configured according to "How To Secure A Linux Server" guide.
+
+### SSH
+SSH is configured according to "How To Secure A Linux Server" guide.
+
+### Unattended upgrades
+Unattended upgrades is configured to only upgrade security upgrades automatically. Automatic restarts are enabled.
 
 ## Plans / ToDos
 - [ ] use Ansible vault to securely store secrets
@@ -58,3 +122,4 @@ Read all tasks carefully and make sure they do not break your system before usin
 ## Credits
 - [imthenachoman](https://github.com/imthenachoman) for creating the great [How To Secure A Linux Server](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server) guide
 - [Neo23x0](https://github.com/Neo23x0) for the auditd best practice rules
+- [Decatec](https://decatec.de/linux/linux-einfach-e-mails-versenden-mit-msmtp/) for the easy mail configuration
