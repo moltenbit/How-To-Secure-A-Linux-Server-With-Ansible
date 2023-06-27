@@ -1,0 +1,127 @@
+
+    - name: default config for ufw
+      become: true
+      ufw:
+        state: enabled
+        logging: on
+      notify: restart ufw service
+
+    - name: ufw - default deny in
+      become: true
+      ufw:
+        policy: deny
+        direction: incoming
+      notify: restart ufw service
+
+    - name: ufw - default deny out
+      become: true
+      ufw:
+        policy: deny
+        direction: outgoing
+      notify: restart ufw service
+
+    - name: ufw - configure ssh rule
+      become: true
+      ufw:
+        rule: limit
+        direction: in
+        to_port: "{{ ssh_port }}"
+      notify: restart ufw service
+
+    - name: ufw - allow outgoing ports
+      become: true
+      ufw: 
+        rule: allow
+        direction: out
+        to_port: "{{ item }}"
+      with_items:
+        - "53"
+        - "123"
+        - "80"
+        - "443"
+        - "{{ mail_port }}" #outgoing mail port
+      notify: restart ufw service
+
+    - name: configure psad
+      become: true
+      lineinfile:
+        dest: /etc/psad/psad.conf
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: '^EMAIL_ADDRESSES', line: 'EMAIL_ADDRESSES {{ mail_to }};' }
+        - { regexp: '^EXPECT_TCP_OPTIONS', line: 'EXPECT_TCP_OPTIONS Y;'}
+        - { regexp: '^ENABLE_PSADWATCHD', line: 'ENABLE_PSADWATCHD Y;'}
+        - { regexp: '^ENABLE_AUTO_IDS ', line: 'ENABLE_AUTO_IDS Y;'}
+        - { regexp: '^ENABLE_AUTO_IDS_EMAILS', line: 'ENABLE_AUTO_IDS_EMAILS Y;'}
+        - { regexp: '^AUTO_IDS_DANGER_LEVEL', line: 'AUTO_IDS_DANGER_LEVEL 3;'}
+        - { regexp: '^HOSTNAME', line: 'HOSTNAME {{ ansible_hostname }};'}
+      notify: restart psad service
+
+    - name: add logging to ufw before.rules
+      become: true
+      blockinfile:
+        dest: /etc/ufw/before.rules
+        insertbefore: "COMMIT"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          # log all traffic so psad can analyze
+          -A INPUT -j LOG --log-tcp-options --log-prefix "[IPTABLES] "
+          -A FORWARD -j LOG --log-tcp-options --log-prefix "[IPTABLES] "
+      notify: restart ufw service
+
+    - name: add logging to ufw before6.rules
+      become: true
+      blockinfile:
+        dest: /etc/ufw/before6.rules
+        insertbefore: "COMMIT"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          # log all traffic so psad can analyze
+          -A INPUT -j LOG --log-tcp-options --log-prefix "[IPTABLES] "
+          -A FORWARD -j LOG --log-tcp-options --log-prefix "[IPTABLES] "
+      notify: restart ufw service
+
+    - name: update psad signatures
+      become: true
+      shell: |
+        psad --sig-update
+
+    - name: configure fail2ban
+      become: true
+      blockinfile:
+        path: /etc/fail2ban/jail.local
+        block: |
+          [DEFAULT]
+          # the IP address range we want to ignore
+          ignoreip = 127.0.0.1/8 
+
+          # who to send e-mail to
+          destemail = {{ mail_to }}
+
+          # who is the email from
+          sender = {{ mail_from }}
+
+          # since we're using exim4 to send emails
+          mta = mail
+
+          # get email alerts
+          action = %(action_mwl)s
+        create: true
+      notify: restart fail2ban service
+
+    - name: fail2ban - configure ssh jail 
+      become: true
+      blockinfile:
+        path: /etc/fail2ban/jail.d/ssh.local
+        block: |
+          [sshd]
+          enabled = true
+          banaction = ufw
+          port = {{ ssh_port }}
+          filter = sshd
+          logpath = %(sshd_log)s
+          maxretry = 5
+        create: true
+      notify: restart fail2ban service
+

@@ -1,0 +1,8 @@
+
+    - name: remove default auditd rules and download best practice rules
+      become: true
+      shell: |
+        rm /etc/audit/rules.d/audit.rules
+        wget -P /etc/audit/rules.d/ https://raw.githubusercontent.com/Neo23x0/auditd/master/audit.rules
+        service auditd restart
+

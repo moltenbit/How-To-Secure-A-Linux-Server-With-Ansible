@@ -1,0 +1,11 @@
+sshpub_location: SSH_PUBKEY_HERE #the full path to your SSH public key ( e.g. /Users/username/.ssh/id_ed25519.pub )
+root_pw: "PASSWORD_HERE" #root password that should be set
+user_name: USERNAME_HERE #username for the created user
+user_pw: "PASSWORD_HERE" #password for the new user
+ssh_port: 55899 #port number for ssh
+mail_to: mailto@example.com #the mail address where mails should be sent to
+mail_from: mailfrom@example.com #the mail address where mails are sent from 
+mail_smtp_server: smtp.example.com #mail server, e.g. smtp.gmail.com
+mail_pw: PASSWORD_HERE #password for the mail_from mail address
+mail_port: 587 #the port where mails are sent to the mail server, e.g. 587
+

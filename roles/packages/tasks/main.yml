@@ -1,0 +1,32 @@
+    - name: update and upgrade
+      become: true
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: install packages
+      become: true
+      apt:
+        name: 
+          - apt-transport-https
+          - ca-certificates
+          - host
+          - kbtin
+          - ntp
+          - libpam-pwquality
+          - unattended-upgrades
+          - apt-listchanges
+          - apticron
+          - ufw
+          - psad
+          - fail2ban
+          - msmtp
+          - msmtp-mta
+          - mailutils
+          - clamav
+          - clamav-freshclam
+          - clamav-daemon
+          - rkhunter
+          - auditd
+          - audispd-plugins
+        state: present

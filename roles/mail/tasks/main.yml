@@ -1,0 +1,51 @@
+
+    - name: configure mail settings
+      become: true
+      blockinfile:
+        path: /etc/msmtprc
+        block: |
+          defaults
+          port {{ mail_port }}
+          tls on
+          tls_trust_file /etc/ssl/certs/ca-certificates.crt
+          account {{ mail_from }}
+          host {{ mail_smtp_server }}
+          set_from_header on
+          from {{ mail_from }}
+          auth on
+          user {{ mail_from }}
+          password {{ mail_pw }}
+          account default: {{ mail_from }}
+          aliases /etc/aliases
+          logfile /var/log/msmtp
+        create: true
+
+    - name: chmod mail config file
+      become: true
+      file:
+        path: /etc/msmtprc
+        group: msmtp
+        mode: '640'
+
+    - name: configure mail settings pt. 2
+      become: true
+      lineinfile:
+        dest: /etc/aliases
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        create: true
+      loop:
+        - { regexp: '^root:', line: 'root: {{ mail_to }}' }
+        - { regexp: '^default:', line: 'default: {{ mail_to }}' }
+
+    - name: configure mail settings pt. 3
+      become: true
+      lineinfile:
+        path: /etc/mail.rc
+        regexp: '^set sendmail'
+        line: 'set sendmail="/usr/bin/msmtp -t"'
+        create: yes
+
+    - name: send a testmail
+      become: true
+      shell: echo "Testmail content" | mail -s "Testmail subject" {{ mail_to }}

@@ -1,0 +1,41 @@
+
+    - name: copy rkhunter's default config file
+      become: true
+      shell: cp -p /etc/rkhunter.conf /etc/rkhunter.conf.local
+
+    - name: configure rkhunter
+      become: true
+      lineinfile:
+        dest: /etc/rkhunter.conf.local
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: '^UPDATE_MIRRORS', line: 'UPDATE_MIRRORS=1' }
+        - { regexp: '^MIRRORS_MODE', line: 'MIRRORS_MODE=0'}
+        - { regexp: '^MAIL-ON-WARNING', line: 'MAIL-ON-WARNING={{ mail_to }}'}
+        - { regexp: '^COPY_LOG_ON_ERROR', line: 'COPY_LOG_ON_ERROR=1'}
+        - { regexp: '^PHALANX2_DIRTEST', line: 'PHALANX2_DIRTEST=1'}
+        - { regexp: '^WEB_CMD', line: 'WEB_CMD=""'}
+        - { regexp: '^USE_LOCKING', line: 'USE_LOCKING=1'}
+        - { regexp: '^SHOW_SUMMARY_WARNINGS_NUMBER', line: 'SHOW_SUMMARY_WARNINGS_NUMBER=1'}
+
+    - name: configure rkhunter pt. 2
+      become: true
+      lineinfile:
+        dest: /etc/default/rkhunter
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+      loop:
+        - { regexp: '^CRON_DAILY_RUN', line: 'CRON_DAILY_RUN="true"' }
+        - { regexp: '^CRON_DB_UPDATE', line: 'CRON_DB_UPDATE="true"' }
+        - { regexp: '^DB_UPDATE_EMAIL', line: 'DB_UPDATE_EMAIL="false"' }
+        - { regexp: '^REPORT_EMAIL', line: 'REPORT_EMAIL="root"' }
+        - { regexp: '^APT_AUTOGEN', line: 'APT_AUTOGEN="true"' }
+        - { regexp: '^NICE', line: 'NICE="0"' }
+        - { regexp: '^RUN_CHECK_ON_BATTERY', line: 'RUN_CHECK_ON_BATTERY="false"' }
+
+    - name: update rkhunter
+      become: true
+      shell: |
+        rkhunter --update
+        rkhunter --propupd

@@ -1,0 +1,24 @@
+    - name: prepare lynis installation
+      become: true
+      shell: |
+        wget -O - https://packages.cisofy.com/keys/cisofy-software-public.key | sudo apt-key add -
+        echo "deb https://packages.cisofy.com/community/lynis/deb/ stable main" | sudo tee /etc/apt/sources.list.d/cisofy-lynis.list
+
+    - name: update and upgrade
+      become: true
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: install lynis
+      become: true
+      apt:
+        name: lynis
+        state: present
+
+    - name: update and run first lynis audit
+      become: true
+      shell: |
+        lynis update info
+        lynis audit system | ansi2html -l > /tmp/lynis-report.html 
+        echo "First Lynis report see attachment" | mail -A /tmp/lynis-report.html -s "Lynis report" {{ mail_to }}

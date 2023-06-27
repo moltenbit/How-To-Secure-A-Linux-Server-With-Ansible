@@ -1,0 +1,17 @@
+    - name: restart ufw service
+      become: yes
+      service: 
+        name: ufw
+        state: restarted
+
+    - name: restart psad service
+      become: yes
+      service: 
+        name: psad
+        state: restarted
+
+    - name: restart fail2ban service
+      become: yes
+      service: 
+        name: fail2ban
+        state: restarted

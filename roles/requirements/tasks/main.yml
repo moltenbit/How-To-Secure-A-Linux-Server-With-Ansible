@@ -1,0 +1,54 @@
+
+    - name: install sudo via apt
+      apt:
+        name: sudo
+
+    - name: create group for ssh users
+      group:
+        name: sshusers
+
+    - name: create group for su users
+      group:
+        name: suusers
+
+    - name: create group for sudo users
+      group:
+        name: sudousers
+
+    - name: create new user with password, add to groups
+      user:
+        name: "{{ user_name }}"
+        password: "{{ user_pw | password_hash('sha512')}}"
+        groups: "sshusers, sudousers, suusers"
+        shell: /bin/bash
+
+    - name: limit sudo to sudousers groups
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^%sudousers'
+        line: '%sudousers   ALL=(ALL:ALL) ALL'
+
+    - name: limit who can use su
+      register: sustd
+      shell: |
+        sudo dpkg-statoverride --update --add root suusers 4750 /bin/su
+      failed_when: 
+        - sustd.rc != 0
+        - '"exist" not in sustd.stderr' # this has to be changed: unsure how to skip the "already exist" error in other languages
+
+    - name: passwordless sudo for new user
+      lineinfile:
+        path: /etc/sudoers
+        regexp: '^{{ user_name }}'
+        line: '{{ user_name }} ALL=(ALL) NOPASSWD: ALL'
+        state: present
+        mode: 0440
+        create: yes
+        validate: 'visudo -cf %s'
+
+    - name: add authorized keys for new user
+      authorized_key:
+        user: "{{ user_name }}"
+        key: "{{ lookup('file', sshpub_location) }}"
+
+    
