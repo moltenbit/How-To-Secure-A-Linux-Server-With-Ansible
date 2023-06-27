@@ -73,6 +73,7 @@ PSAD is configured according to "How To Secure A Linux Server" guide.
 
 ### Lynis
 Lynis is configured according to "How To Secure A Linux Server" guide and will run an audit + send the report as an attachment to your mail address configured in *variables.yml*.
+Current Lynis rating is 77.
 
 ### Mail
 For mailing I chose msmtp with the help from [Decatec's guide](https://decatec.de/linux/linux-einfach-e-mails-versenden-mit-msmtp/). This will send a testmail.
