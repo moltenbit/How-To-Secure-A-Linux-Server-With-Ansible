@@ -79,27 +79,27 @@ For mailing I chose msmtp with the help from [Decatec's guide](https://decatec.d
 
 ### Packages
 Installed packages are:
-          - apt-transport-https
-          - ca-certificates
-          - host
-          - kbtin
-          - ntp
-          - libpam-pwquality
-          - unattended-upgrades
-          - apt-listchanges
-          - apticron
-          - ufw
-          - psad
-          - fail2ban
-          - msmtp
-          - msmtp-mta
-          - mailutils
-          - clamav
-          - clamav-freshclam
-          - clamav-daemon
-          - rkhunter
-          - auditd
-          - audispd-plugins
+- apt-transport-https
+- ca-certificates
+- host
+- kbtin
+- ntp
+- libpam-pwquality
+- unattended-upgrades
+- apt-listchanges
+- apticron
+- ufw
+- psad
+- fail2ban
+- msmtp
+- msmtp-mta
+- mailutils
+- clamav
+- clamav-freshclam
+- clamav-daemon
+- rkhunter
+- auditd
+- audispd-plugins
 
 ### Password quality
 Password quality is done via pam_pwquality according to "How To Secure A Linux Server" guide.
