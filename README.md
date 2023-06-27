@@ -5,8 +5,13 @@ These Ansible playbooks are made to help install secure Linux servers faster.
 
 ## How to get started
 1. Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-2. git-clone this repository
-3. [Create SSH-Public/Private-Keys](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#ssh-publicprivate-keys)
+2. git clone this repository
+  ```
+  git clone https://github.com/sysadt/How-To-Secure-A-Linux-Server-With-Ansible
+  cd How-To-Secure-A-Linux-Server-With-Ansible
+  ```
+ 
+4. [Create SSH-Public/Private-Keys](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server#ssh-publicprivate-keys)
   ```
   ssh-keygen -t ed25519
   ```
