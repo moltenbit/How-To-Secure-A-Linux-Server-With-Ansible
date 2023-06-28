@@ -70,11 +70,11 @@ Uses best practice rules from [Neo23x0](https://github.com/Neo23x0)
 ClamAV is set to run everyday at 3 AM to scan the full system, exluding sys folders.
 
 ### Firewall: UFW
-UFW is set to defaulty deny in and out. 
+UFW is set to default deny in and out. 
 The SSH-Port is set to *limit in*, allowed outgoing ports by default are 53 (DNS), 123 (NTP), 80 (http), 443 (https) and the mail port specified in *variables.yml*.
 
 ### Firewall: PSAD and Fail2Ban
-PSAD is configured according to "How To Secure A Linux Server" guide.
+PSAD and Fail2Ban is configured according to "How To Secure A Linux Server" guide.
 
 ### Lynis
 Lynis is configured according to "How To Secure A Linux Server" guide and will run an audit + send the report as an attachment to your mail address configured in *variables.yml*.
