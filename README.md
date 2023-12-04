@@ -7,7 +7,7 @@ These Ansible playbooks are made to help install secure Linux servers faster.
 1. Install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 2. git clone this repository
   ```
-  git clone https://github.com/sysadt/How-To-Secure-A-Linux-Server-With-Ansible
+  git clone https://github.com/moltenbit/How-To-Secure-A-Linux-Server-With-Ansible
   cd How-To-Secure-A-Linux-Server-With-Ansible
   ```
  
