@@ -125,8 +125,6 @@ Unattended upgrades is configured to only upgrade security upgrades automaticall
 ## Warning!
 Read all tasks carefully and make sure they do not break your system before using these playbooks! Do not rely solely on the Ansible playbooks for security! It is your responsibility to make sure all settings you need have been set and are working. This is just a starting point! Depending on your needs and goals make sure to further secure your system.
 
-Currently this repository is NOT affiliated with the [How To Secure A Linux Server](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server) guide. This repository uses the guide as a template on a lot of configurations.
-
 ## Credits
 - [imthenachoman](https://github.com/imthenachoman) for creating the great [How To Secure A Linux Server](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server) guide
 - [Neo23x0](https://github.com/Neo23x0) for the auditd best practice rules
