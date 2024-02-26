@@ -39,7 +39,7 @@ Run the requirements playbook using the root password you specified while instal
 
 Run the main playbook with the new users password you specified in the *variables.yml* file:
 
-    ansible-playbook --inventory hosts.yml --ask-pass main-playbook.yml
+    ansible-playbook --inventory hosts.yml main-playbook.yml
 
 &nbsp;
 
