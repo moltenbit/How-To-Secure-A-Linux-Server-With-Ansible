@@ -56,6 +56,8 @@
         - { regexp: '^ENABLE_AUTO_IDS_EMAILS', line: 'ENABLE_AUTO_IDS_EMAILS Y;'}
         - { regexp: '^AUTO_IDS_DANGER_LEVEL', line: 'AUTO_IDS_DANGER_LEVEL 3;'}
         - { regexp: '^HOSTNAME', line: 'HOSTNAME {{ ansible_hostname }};'}
+        - { regexp: '^EMAIL_ALERT_DANGER_LEVEL', line: 'EMAIL_ALERT_DANGER_LEVEL {{ psad_email_alert_danger_level | default("1") }};'}
+        - { regexp: '^IPT_SYSLOG_FILE', line: 'IPT_SYSLOG_FILE {{ psad_syslog_file | default("/var/log/syslog") }};'}
       notify: restart psad service
 
     - name: add logging to ufw before.rules
