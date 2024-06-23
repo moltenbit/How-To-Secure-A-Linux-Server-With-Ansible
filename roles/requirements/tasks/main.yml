@@ -1,3 +1,7 @@
+    - name: apt update
+      apt:
+        update_cache: yes
+        upgrade: false
 
     - name: install sudo via apt
       apt:
