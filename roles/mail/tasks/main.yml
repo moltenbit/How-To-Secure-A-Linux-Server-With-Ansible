@@ -13,7 +13,7 @@
           set_from_header on
           from {{ mail_from }}
           auth on
-          user {{ mail_from }}
+          user {{ mail_username | default(mail_from) }}
           password {{ mail_pw }}
           account default: {{ mail_from }}
           aliases /etc/aliases
