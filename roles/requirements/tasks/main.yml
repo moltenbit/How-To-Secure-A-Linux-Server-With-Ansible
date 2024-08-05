@@ -9,33 +9,34 @@
 
     - name: create group for ssh users
       group:
-        name: sshusers
+        name: '{{ sshusers_group }}'
 
     - name: create group for su users
       group:
-        name: suusers
+        name: '{{ suusers_group }}'
 
     - name: create group for sudo users
       group:
-        name: sudousers
+        name: '{{ sudousers_group }}'
 
     - name: create new user with password, add to groups
       user:
         name: "{{ user_name }}"
-        password: "{{ user_pw | password_hash('sha512')}}"
-        groups: "sshusers, sudousers, suusers"
+        password: "{{ user_pw | password_hash('sha512') }}"
+        groups: "{{ sshusers_group }}, {{ sudousers_group }}, {{ suusers_group }}"
+        append: true
         shell: /bin/bash
 
     - name: limit sudo to sudousers groups
       lineinfile:
         path: /etc/sudoers
-        regexp: '^%sudousers'
-        line: '%sudousers   ALL=(ALL:ALL) ALL'
+        regexp: '^%{{ sudousers_group }}'
+        line: '%{{ sudousers_group }}   ALL=(ALL:ALL) ALL'
 
     - name: limit who can use su
       register: sustd
       shell: |
-        sudo dpkg-statoverride --update --add root suusers 4750 /bin/su
+        sudo dpkg-statoverride --update --add root {{ suusers_group }} 4750 /bin/su
       failed_when: 
         - sustd.rc != 0
         - '"exist" not in sustd.stderr' # this has to be changed: unsure how to skip the "already exist" error in other languages
@@ -49,6 +50,7 @@
         mode: 0440
         create: yes
         validate: 'visudo -cf %s'
+      when: passwordless_sudo == true
 
     - name: add authorized keys for new user
       authorized_key:

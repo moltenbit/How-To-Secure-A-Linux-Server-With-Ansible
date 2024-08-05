@@ -1,6 +1,11 @@
     - name: Requirements-Playbook
       hosts: debian-server
       remote_user: root
+      vars:
+        sshusers_group: sshusers
+        suusers_group: suusers
+        sudousers_group: sudousers
+        passwordless_sudo: true
       vars_files: ./group_vars/variables.yml
 
       roles:
