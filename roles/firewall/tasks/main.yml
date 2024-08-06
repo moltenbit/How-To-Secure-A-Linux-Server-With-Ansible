@@ -35,6 +35,7 @@
         direction: out
         to_port: "{{ item }}"
       with_items:
+        - "43"
         - "53"
         - "123"
         - "80"
