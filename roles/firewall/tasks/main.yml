@@ -35,7 +35,7 @@
         direction: out
         to_port: "{{ item }}"
       with_items:
-        - "43/tcp"
+        - "43"
         - "53"
         - "123"
         - "80"
