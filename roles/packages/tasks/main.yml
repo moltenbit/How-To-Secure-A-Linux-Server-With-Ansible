@@ -17,6 +17,7 @@
           - clamav
           - clamav-daemon
           - clamav-freshclam
+          - curl
           - fail2ban
           - host
           - kbtin
