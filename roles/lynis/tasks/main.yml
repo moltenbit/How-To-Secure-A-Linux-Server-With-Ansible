@@ -1,36 +1,60 @@
-    - name: update and upgrade
-      become: true
-      apt:
-        update_cache: yes
-        upgrade: yes
+- name: update and upgrade
+  become: true
+  apt:
+    update_cache: yes
+    upgrade: yes
 
-    - name: install lynis dependencies
-      become: true
-      apt:
-        name: gpg
-        state: present
+- name: install lynis dependencies
+  become: true
+  apt:
+    name: gpg
+    state: present
 
-    - name: prepare lynis installation
-      become: true
-      shell: |
-        curl -fsSL https://packages.cisofy.com/keys/cisofy-software-public.key | sudo gpg --dearmor -o /usr/share/keyrings/cisofy-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/cisofy-archive-keyring.gpg] https://packages.cisofy.com/community/lynis/deb stable main" | sudo tee /etc/apt/sources.list.d/cisofy-lynis.list
+- name: ensure cisofy keyring directory exists
+  become: true
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    mode: '0755'
 
-    - name: update and upgrade
-      become: true
-      apt:
-        update_cache: yes
-        upgrade: yes
+- name: download cisofy signing key
+  become: true
+  get_url:
+    url: https://packages.cisofy.com/keys/cisofy-software-public.key
+    dest: /usr/share/keyrings/cisofy-archive-keyring.asc
+    mode: '0644'
 
-    - name: install lynis
-      become: true
-      apt:
-        name: lynis
-        state: present
+- name: dearmor cisofy signing key for apt
+  become: true
+  command: >-
+    gpg --dearmor --yes
+    -o /usr/share/keyrings/cisofy-archive-keyring.gpg
+    /usr/share/keyrings/cisofy-archive-keyring.asc
+  args:
+    creates: /usr/share/keyrings/cisofy-archive-keyring.gpg
 
-    - name: update and run first lynis audit
-      become: true
-      shell: |
-        lynis update info
-        lynis audit system | ansi2html -l > /tmp/lynis-report.html 
-        echo "First Lynis report see attachment" | mail -A /tmp/lynis-report.html -s "Lynis report" {{ mail_to }}
+- name: add cisofy repository
+  become: true
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cisofy-archive-keyring.gpg] https://packages.cisofy.com/community/lynis/deb stable main"
+    filename: cisofy-lynis
+    state: present
+
+- name: update and upgrade
+  become: true
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: install lynis
+  become: true
+  apt:
+    name: lynis
+    state: present
+
+- name: update and run first lynis audit
+  become: true
+  shell: |
+    lynis update info
+    lynis audit system | ansi2html -l > /tmp/lynis-report.html
+    echo "First Lynis report see attachment" | mail -A /tmp/lynis-report.html -s "Lynis report" {{ mail_to }}
