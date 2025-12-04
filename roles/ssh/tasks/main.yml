@@ -79,7 +79,14 @@
 
     - name: remove short diffie diffie-hellman
       become: true
-      shell: |
-        awk '$5 >= 3071' /etc/ssh/moduli | sudo tee /etc/ssh/moduli.tmp
-        mv /etc/ssh/moduli.tmp /etc/ssh/moduli
+      shell:
+        creates: /etc/ssh/moduli.short
+        cmd: |
+          cp /etc/ssh/moduli /etc/ssh/moduli.short
+          awk '$5 >= 3071' /etc/ssh/moduli | tee /etc/ssh/moduli.tmp
+          if ! cmp /etc/ssh/moduli /etc/ssh/moduli.tmp; then
+            mv /etc/ssh/moduli.tmp /etc/ssh/moduli
+          fi
       notify: restart ssh service
+      register: moduli_changed
+      changed_when: "'differ:' in moduli_changed.stdout"
