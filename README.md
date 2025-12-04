@@ -88,8 +88,6 @@ Installed packages are:
 - apt-transport-https
 - ca-certificates
 - host
-- kbtin
-- ntp
 - libpam-pwquality
 - unattended-upgrades
 - apt-listchanges

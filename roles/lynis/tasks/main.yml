@@ -10,12 +10,20 @@
     name: gpg
     state: present
 
-- name: add cisofy signing key
+- name: download cisofy signing key
   become: true
-  apt_key:
+  ansible.builtin.get_url:
     url: https://packages.cisofy.com/keys/cisofy-software-public.key
-    keyring: /usr/share/keyrings/cisofy-archive-keyring.gpg
-    state: present
+    dest: /usr/share/keyrings/cisofy-archive-keyring.asc
+    mode: "0644"
+
+- name: dearmor cisofy signing key
+  become: true
+  ansible.builtin.command: >-
+    gpg --dearmor -o /usr/share/keyrings/cisofy-archive-keyring.gpg
+    /usr/share/keyrings/cisofy-archive-keyring.asc
+  args:
+    creates: /usr/share/keyrings/cisofy-archive-keyring.gpg
 
 - name: add cisofy repository
   become: true
