@@ -8,25 +8,26 @@
       become: true
       apt:
         name: 
+          - apt-listchanges
           - apt-transport-https
+          - apticron
+          - audispd-plugins
+          - auditd
           - ca-certificates
+          - clamav
+          - clamav-daemon
+          - clamav-freshclam
+          - curl
+          - fail2ban
           - host
           - kbtin
-          - ntp
           - libpam-pwquality
-          - unattended-upgrades
-          - apt-listchanges
-          - apticron
-          - ufw
-          - psad
-          - fail2ban
+          - mailutils
           - msmtp
           - msmtp-mta
-          - mailutils
-          - clamav
-          - clamav-freshclam
-          - clamav-daemon
+          - ntp
+          - psad
           - rkhunter
-          - auditd
-          - audispd-plugins
+          - ufw
+          - unattended-upgrades
         state: present
