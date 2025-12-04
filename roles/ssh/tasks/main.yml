@@ -1,3 +1,13 @@
+    - name: ufw - preemptively allow new SSH port
+      become: true
+      community.general.ufw:
+        rule: limit
+        direction: in
+        to_port: "{{ ssh_port }}"
+      notify: "firewall : restart ufw service"
+
+    - name: flush handlers to restart ufw
+      ansible.builtin.meta: flush_handlers
 
     - name: secure ssh configuration 
       become: true
