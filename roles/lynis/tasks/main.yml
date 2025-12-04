@@ -1,36 +1,44 @@
-    - name: update and upgrade
-      become: true
-      apt:
-        update_cache: yes
-        upgrade: yes
+- name: update and upgrade
+  become: true
+  apt:
+    update_cache: yes
+    upgrade: yes
 
-    - name: install lynis dependencies
-      become: true
-      apt:
-        name: gpg
-        state: present
+- name: install lynis dependencies
+  become: true
+  apt:
+    name: gpg
+    state: present
 
-    - name: prepare lynis installation
-      become: true
-      shell: |
-        curl -fsSL https://packages.cisofy.com/keys/cisofy-software-public.key | sudo gpg --dearmor -o /usr/share/keyrings/cisofy-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/cisofy-archive-keyring.gpg] https://packages.cisofy.com/community/lynis/deb stable main" | sudo tee /etc/apt/sources.list.d/cisofy-lynis.list
+- name: add cisofy signing key
+  become: true
+  apt_key:
+    url: https://packages.cisofy.com/keys/cisofy-software-public.key
+    keyring: /usr/share/keyrings/cisofy-archive-keyring.gpg
+    state: present
 
-    - name: update and upgrade
-      become: true
-      apt:
-        update_cache: yes
-        upgrade: yes
+- name: add cisofy repository
+  become: true
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cisofy-archive-keyring.gpg] https://packages.cisofy.com/community/lynis/deb stable main"
+    filename: cisofy-lynis
+    state: present
 
-    - name: install lynis
-      become: true
-      apt:
-        name: lynis
-        state: present
+- name: update and upgrade
+  become: true
+  apt:
+    update_cache: yes
+    upgrade: yes
 
-    - name: update and run first lynis audit
-      become: true
-      shell: |
-        lynis update info
-        lynis audit system | ansi2html -l > /tmp/lynis-report.html 
-        echo "First Lynis report see attachment" | mail -A /tmp/lynis-report.html -s "Lynis report" {{ mail_to }}
+- name: install lynis
+  become: true
+  apt:
+    name: lynis
+    state: present
+
+- name: update and run first lynis audit
+  become: true
+  shell: |
+    lynis update info
+    lynis audit system | ansi2html -l > /tmp/lynis-report.html
+    echo "First Lynis report see attachment" | mail -A /tmp/lynis-report.html -s "Lynis report" {{ mail_to }}
