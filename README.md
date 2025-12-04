@@ -49,7 +49,7 @@ If you need to run the playbooks multiple times remember to use the SSH key and 
 
 &nbsp;
 
-Tested on Debian 12 Bookworm.
+Tested on Debian 12 and 13.
 
 ## Configurations
 The playbook uses most of the settings from ["How To Secure A Linux Server"](https://github.com/imthenachoman/How-To-Secure-A-Linux-Server) / my choices if the guide has more than one option to do something.
